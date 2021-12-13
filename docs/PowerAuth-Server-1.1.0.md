@@ -2,6 +2,26 @@
 
 This guide contains instructions for migration from PowerAuth Server version `1.0.x` to version `1.1.x`.
 
+## Partial Package Name Migration
+
+Our original package name used to start with `io.getlime.*`. In `1.1.x`, we partially migrated our components to a new package name `com.wultra.*`, while some components still use the legacy package name. When autowiring dependencies, make sure to account for both package name if needed:
+
+```java
+@Configuration
+@ComponentScan(basePackages = {"io.getlime.security.powerauth","com.wultra.security.powerauth"})
+public class PowerAuthWebServiceConfiguration {
+}
+```
+
+In case you do not provide the component scan hints mentioned above, you may see issues with autowiring, i.e.:
+
+```
+Parameter 0 of method setAuthenticationProvider in io.getlime.security.powerauth.rest.api.spring.annotation.PowerAuthAnnotationInterceptor required a bean of type 'io.getlime.security.powerauth.rest.api.spring.provider.PowerAuthAuthenticationProvider' that could not be found.
+
+Action:
+Consider defining a bean of type 'io.getlime.security.powerauth.rest.api.spring.provider.PowerAuthAuthenticationProvider' in your configuration.
+```
+
 ## Embedded Bouncy Castle Library (Version 1.68)
 
 Bouncy Castle library has been updated to version `1.68` and it is now **included directly in the application bundle (\*.war)**.
@@ -188,7 +208,7 @@ ALTER TABLE pa_application_callback
 
 ```sql
 ALTER TABLE pa_application_callback
-	ADD type VARCHAR2(64) DEFAULT 'ACTIVATION_STATUS_CHANGE' NOT NULL;
+	ADD type VARCHAR2(64 CHAR) DEFAULT 'ACTIVATION_STATUS_CHANGE' NOT NULL;
 ```
 
 The `CreateCallbackUrlRequest` also now contains a new mandatory attribute `type` that can be either `ACTIVATION_STATUS_CHANGE` or `OPERATION_STATUS_CHANGE`.
@@ -223,7 +243,7 @@ CREATE TABLE shedlock (
 ### Oracle
 
 ```sql
-CREATE TABLE "shedlock" (
+CREATE TABLE shedlock (
     name        VARCHAR(64) NOT NULL PRIMARY KEY,
     lock_until  TIMESTAMP NOT NULL,
     locked_at   TIMESTAMP NOT NULL,

@@ -124,7 +124,9 @@ CREATE TABLE "pa_application_callback"
     "application_id"     INTEGER NOT NULL,
     "name"               VARCHAR(255),
     "callback_url"       VARCHAR(1024),
-    "attributes"         VARCHAR(1024)
+    "type"               VARCHAR(64) DEFAULT 'ACTIVATION_STATUS_CHANGE' NOT NULL,
+    "attributes"         VARCHAR(1024),
+    "authentication"     TEXT
 );
 
 --
@@ -237,7 +239,7 @@ CREATE TABLE "pa_operation_template" (
 --
 -- DDL for Table SHEDLOCK
 --
-CREATE TABLE "shedlock" (
+CREATE TABLE shedlock (
     name VARCHAR(64) NOT NULL PRIMARY KEY,
     lock_until TIMESTAMP NOT NULL,
     locked_at TIMESTAMP NOT NULL,
